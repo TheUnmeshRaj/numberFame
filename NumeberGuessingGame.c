@@ -14,6 +14,7 @@ int main()
     int totalGuesses;
     int bestGuess[MAX_LEVELS] = {MAX_ATTEMPTS + 1}; // Initialize bestGuess array with values greater than MAX_ATTEMPTS
     int minimum;
+    int levelScores[MAX_LEVELS] = {0}; // Array to store scores for each level
 
     printf("Choose a mode: \n1. Default Mode\n2. Custom Mode\n");
 
@@ -98,6 +99,8 @@ int main()
                         {
                             bestGuess[game - 1] = totalGuesses;
                         }
+                        // Update score for the current level
+                        levelScores[game - 1] = totalGuesses;
                     }
                     else
                     {
@@ -107,32 +110,36 @@ int main()
                 totalGuesses++;
             } while (guess != randomNumber);
 
-            printf("\nDo you want to continue?\n");
-            scanf("%s", restart);
-
-            if (strcmp(restart, "no") == 0)
+            if (game == MAX_LEVELS)
             {
-                if (game == MAX_LEVELS)
+                minimum = bestGuess[0];
+                for (int i = 1; i < MAX_LEVELS; i++)
                 {
-                    minimum = bestGuess[0];
-                    for (int i = 1; i < MAX_LEVELS; i++)
+                    if (bestGuess[i] < minimum)
                     {
-                        if (bestGuess[i] < minimum)
-                        {
-                            minimum = bestGuess[i];
-                        }
+                        minimum = bestGuess[i];
                     }
-                    printf("\n------------------------------------------------------\n");
-                    if (minimum == 1)
-                    {
-                        printf("Congratulations!!! Your best score across all levels was %d attempt.\n", minimum);
-                    }
-                    else
-                    {
-                        printf("Congratulations!!! Your best score across all levels was %d attempts.\n", minimum);
-                    }
-                    printf("------------------------------------------------------\n");
                 }
+                printf("\n------------------------------------------------------\n");
+                if (minimum == 1)
+                {
+                    printf("Congratulations!!! Your best score across all levels was %d attempt.\n", minimum);
+                }
+                else
+                {
+                    printf("Congratulations!!! Your best score across all levels was %d attempts.\n", minimum);
+                }
+                printf("Scores for each level:\n");
+                for (int i = 0; i < MAX_LEVELS; i++)
+                {
+                    printf("Level %d: %d attempts\n", i + 1, levelScores[i]);
+                }
+                printf("------------------------------------------------------\n");
+            }
+            else
+            {
+                printf("\nDo you want to continue?\n");
+                scanf("%s", restart);
             }
         }
         else if (mode == 2)
@@ -181,6 +188,8 @@ int main()
                         printf("Congratulations!!! You guessed it in %d attempts.\n", totalGuesses);
                     }
                     bestGuess[game - 1] = totalGuesses;
+                    // Update score for the current level
+                    levelScores[game - 1] = totalGuesses;
                 }
                 totalGuesses++;
             } while (guess != randomNumber);
@@ -205,6 +214,11 @@ int main()
                 else
                 {
                     printf("Congratulations!!! Your best score was %d attempts.\n", minimum);
+                }
+                printf("Scores for each level:\n");
+                for (int i = 0; i < game; i++)
+                {
+                    printf("Level %d: %d attempts\n", i + 1, levelScores[i]);
                 }
                 printf("------------------------------------------------------\n");
             }
