@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <time.h>
 #include <string.h>
-// decops
+// devopss
 int main()
 {
     char restart[10];
