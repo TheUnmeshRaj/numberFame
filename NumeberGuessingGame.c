@@ -2,11 +2,19 @@
 #include <stdlib.h>
 #include <time.h>
 #include <string.h>
+
+#define MAX_LEVELS 5
+#define MAX_ATTEMPTS 15
+
 int main()
 {
     char restart[10];
     int mode;
     int game = 0;
+    int totalGuesses;
+    int bestGuess[MAX_LEVELS] = {MAX_ATTEMPTS + 1}; // Initialize bestGuess array with values greater than MAX_ATTEMPTS
+    int minimum;
+
     printf("Choose a mode: \n1. Default Mode\n2. Custom Mode\n");
 
     while (scanf("%d", &mode) != 1) // Check for valid integer input
@@ -29,15 +37,103 @@ int main()
 
     do
     {
-        int randomNumber, guess, totalGuesses = 1, upperlimit;
-        int bestGuess[10] = {0};
-        int minimum = bestGuess[0];
+        int randomNumber, guess, upperlimit;
+        totalGuesses = 1; // Initialize totalGuesses for each game
         game++;
 
         if (mode == 1)
         {
-            printf("\nStill working on it....\n");
-            break;
+            printf("\nDEFAULT MODE - LEVEL %d\n", game);
+            printf("------------------------------------------------------\n");
+            // Set different upper limits for each level
+            switch (game)
+            {
+            case 1:
+                upperlimit = 100;
+                break;
+            case 2:
+                upperlimit = 200;
+                break;
+            case 3:
+                upperlimit = 500;
+                break;
+            case 4:
+                upperlimit = 1000;
+                break;
+            case 5:
+                upperlimit = 2000;
+                break;
+            default:
+                break;
+            }
+
+            srand(time(0));
+            randomNumber = rand() % (upperlimit + 1);
+            printf("Guess the number from 0-%d \n", upperlimit);
+
+            do
+            {
+                while (scanf("%d", &guess) != 1)
+                {
+                    printf("INVALID INPUT!!!\nEnter a valid integer input for your guess: ");
+                    while (getchar() != '\n')
+                        ;
+                }
+
+                if (guess > randomNumber)
+                {
+                    printf("Lower number please!!\n");
+                }
+                else if (guess < randomNumber)
+                {
+                    printf("Higher number please!!\n");
+                }
+                else
+                {
+                    if (totalGuesses <= MAX_ATTEMPTS)
+                    {
+                        printf("Congratulations!!! You guessed it in %d attempts.\n", totalGuesses);
+                        // Update best score for the current level
+                        if (totalGuesses < bestGuess[game - 1])
+                        {
+                            bestGuess[game - 1] = totalGuesses;
+                        }
+                    }
+                    else
+                    {
+                        printf("Sorry, you couldn't pass this level. Try again!\n");
+                    }
+                }
+                totalGuesses++;
+            } while (guess != randomNumber);
+
+            printf("\nDo you want to continue?\n");
+            scanf("%s", restart);
+
+            if (strcmp(restart, "no") == 0)
+            {
+                if (game == MAX_LEVELS)
+                {
+                    minimum = bestGuess[0];
+                    for (int i = 1; i < MAX_LEVELS; i++)
+                    {
+                        if (bestGuess[i] < minimum)
+                        {
+                            minimum = bestGuess[i];
+                        }
+                    }
+                    printf("\n------------------------------------------------------\n");
+                    if (minimum == 1)
+                    {
+                        printf("Congratulations!!! Your best score across all levels was %d attempt.\n", minimum);
+                    }
+                    else
+                    {
+                        printf("Congratulations!!! Your best score across all levels was %d attempts.\n", minimum);
+                    }
+                    printf("------------------------------------------------------\n");
+                }
+            }
         }
         else if (mode == 2)
         {
@@ -118,7 +214,7 @@ int main()
             printf("Invalid Input!\n");
             continue;
         }
-    } while (strcmp(restart, "yes") == 0);
+    } while (strcmp(restart, "yes") == 0 && game < MAX_LEVELS);
 
     return 0;
 }
